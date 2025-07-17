@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento Setup Gamer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Orçamento Setup Gamer</h1>
+            <p>Organize seus componentes e monte seu setup dos sonhos!</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Adicionar Item</h2>
+                <form id="item-form">
+                    <div class="form-group">
+                        <label for="item-name">Nome do Item:</label>
+                        <input type="text" id="item-name" placeholder="Ex: Placa de Vídeo RTX 4070" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-category">Categoria:</label>
+                        <select id="item-category" required>
+                            <option value="" disabled selected>Selecione uma categoria</option>
+                            <option value="Hardware">Hardware Principal</option>
+                            <option value="Periférico">Periférico</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Acessório">Acessório</option>
+                            <option value="Software">Software / Jogos</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="item-quantity">Quantidade:</label>
+                            <input type="number" id="item-quantity" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-price">Preço (R$):</label>
+                            <input type="number" id="item-price" min="0" step="0.01" placeholder="0,00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-store">Loja/Onde Encontrei:</label>
+                        <input type="text" id="item-store" placeholder="Ex: Amazon, Kabum, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-link">Link do Produto (opcional):</label>
+                        <input type="url" id="item-link" placeholder="https://">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-parcels">Parcelamento (opcional):</label>
+                        <input type="text" id="item-parcels" placeholder="Ex: 10x R$ 120,00">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Adicionar Item
+                    </button>
+                </form>
+            </section>
+
+            <section class="list-section">
+                <div class="section-header">
+                    <h2>Itens do Orçamento</h2>
+                    <div class="total-display">
+                        <span>Total: R$ <span id="total-value">0,00</span></span>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="search-items" placeholder="Buscar itens...">
+                    <select id="filter-category">
+                        <option value="all">Todas as Categorias</option>
+                        <option value="Hardware">Hardware Principal</option>
+                        <option value="Periférico">Periférico</option>
+                        <option value="Monitor">Monitor</option>
+                        <option value="Acessório">Acessório</option>
+                        <option value="Software">Software / Jogos</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                    <button id="clear-all" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Limpar Tudo
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Categoria</th>
+                                <th>Qtd</th>
+                                <th>Preço</th>
+                                <th>Loja</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-list"></tbody>
+                    </table>
+                </div>
+
+                <div class="actions">
+                    <button id="generate-pdf" class="btn btn-success">
+                        <i class="fas fa-file-pdf"></i> Gerar PDF
+                    </button>
+                    <button id="share-budget" class="btn btn-secondary">
+                        <i class="fas fa-share-alt"></i> Compartilhar
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Crie seu orçamento de setup gamer com facilidade | &copy; <span id="current-year"></span></p>
+        </footer>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Editar Item</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-index">
+                <div class="form-group">
+                    <label for="edit-name">Nome do Item:</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-category">Categoria:</label>
+                    <select id="edit-category" required>
+                        <option value="Hardware">Hardware Principal</option>
+                        <option value="Periférico">Periférico</option>
+                        <option value="Monitor">Monitor</option>
+                        <option value="Acessório">Acessório</option>
+                        <option value="Software">Software / Jogos</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-quantity">Quantidade:</label>
+                        <input type="number" id="edit-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-price">Preço (R$):</label>
+                        <input type="number" id="edit-price" min="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-store">Loja:</label>
+                    <input type="text" id="edit-store">
+                </div>
+                <div class="form-group">
+                    <label for="edit-link">Link:</label>
+                    <input type="url" id="edit-link">
+                </div>
+                <div class="form-group">
+                    <label for="edit-parcels">Parcelamento:</label>
+                    <input type="text" id="edit-parcels">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
