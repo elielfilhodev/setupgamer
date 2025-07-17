@@ -271,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+        // Cabeçalho do PDF
         doc.setFontSize(20);
         doc.setTextColor(108, 92, 231);
         doc.text('Orçamento Setup Gamer', 105, 20, { align: 'center' });
@@ -279,6 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.setTextColor(100);
         doc.text(`Gerado em: ${today.toLocaleDateString('pt-BR')}`, 105, 30, { align: 'center' });
         
+        // Geração da Tabela com o Hook para links
         doc.autoTable({
             startY: 40,
             head: [['Item', 'Categoria', 'Qtd', 'Preço Unit.', 'Subtotal', 'Loja']],
@@ -290,17 +292,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 formatCurrency(item.price * item.quantity),
                 item.store || '-'
             ]),
-            styles: { fontSize: 10, cellPadding: 3, halign: 'center' },
+            styles: { fontSize: 10, cellPadding: 3, halign: 'center', valign: 'middle' },
             headStyles: { fillColor: [108, 92, 231], textColor: 255, fontStyle: 'bold' },
             alternateRowStyles: { fillColor: [240, 240, 255] },
-            columnStyles: { 0: { halign: 'left' }, 1: { halign: 'left' } }
+            columnStyles: { 
+                0: { halign: 'left' }, // Coluna "Item"
+                1: { halign: 'left' }  // Coluna "Categoria"
+            },
+            
+            // =======================================================
+            // NOVA SEÇÃO PARA ADICIONAR OS LINKS CLICÁVEIS
+            // =======================================================
+            didDrawCell: (data) => {
+                // Verifica se a célula está na primeira coluna (índice 0, "Item") e não é do cabeçalho
+                if (data.column.index === 0 && data.cell.section === 'body') {
+                    const item = items[data.row.index];
+                    
+                    // Verifica se o item correspondente possui um link
+                    if (item && item.link) {
+                        // Define a cor do texto para azul para indicar um link
+                        doc.setTextColor(0, 0, 255);
+                        // Adiciona o texto novamente como um link clicável sobre o texto já desenhado
+                        // As coordenadas (data.cell.x, data.cell.y) garantem a posição correta
+                        doc.textWithLink(
+                            item.name, 
+                            data.cell.x + 3, // Adiciona um pequeno preenchimento horizontal
+                            data.cell.y + data.cell.height / 2, // Centraliza verticalmente
+                            { 
+                                url: item.link, 
+                                baseline: 'middle' 
+                            }
+                        );
+                        // Restaura a cor do texto para preto para as próximas células
+                        doc.setTextColor(0, 0, 0);
+                    }
+                }
+            }
         });
 
+        // Exibição do Total
         const finalY = doc.lastAutoTable.finalY || 50;
         doc.setFontSize(14);
         doc.setTextColor(0);
         doc.text(`Total: ${formatCurrency(total)}`, 14, finalY + 15);
         
+        // Salva o PDF
         doc.save(`Orçamento_Setup_Gamer_${today.toISOString().split('T')[0]}.pdf`);
     };
 
